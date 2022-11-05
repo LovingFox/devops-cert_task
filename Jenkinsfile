@@ -30,8 +30,7 @@ pipeline {
                 }
             }
             steps {
-                // sshagent (credentials: ['1d341349-b5bc-483f-9f54-151bcc426690']) {
-                withCredentials(credentials: ['1d341349-b5bc-483f-9f54-151bcc426690']) {
+                sshagent (credentials: ['1d341349-b5bc-483f-9f54-151bcc426690']) {
                     git branch: "application",
                         url: "https://github.com/LovingFox/devops-cert_task.git"
                     // sh "docker context update default --docker host=unix:///var/run/docker.sock"
