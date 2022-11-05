@@ -11,10 +11,11 @@ pipeline {
                 script {
                     dockerHost = "ssh://revyakin@95.73.61.76"
                     sshCredsID = "1d341349-b5bc-483f-9f54-151bcc426690"
+                    repositoryName = "cert_task"
                     // registryHost = "nexus.rtru.tk:8123"
                     // registryCredsID = "678de0e5-da9b-4305-bcf5-1f10f46f8246"
-                    registryHost = "657846606580.dkr.ecr.eu-central-1.amazonaws.com/devops"
-                    registryCredsID = "dc4551e2-fc10-4d39-8f0a-c6ac5278c52f"
+                    registryHost = "657846606580.dkr.ecr.eu-central-1.amazonaws.com"
+                    registryCredsID = "711549df-d6df-4357-abf8-2c2a59be2246"
                 }
             }
         }
@@ -42,9 +43,9 @@ pipeline {
                     url: "https://github.com/LovingFox/devops-cert_task.git"
                 sshagent( credentials:["${sshCredsID}"] ) {
                     withEnv (["DOCKER_HOST=${dockerHost}"]) {
-                        sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${registryHost}/cert_task:${params.appVersion} ."
-                        withDockerRegistry( [credentialsId:"${registryCredsID}", url:"https://${registryHost}/"] ) {
-                            sh "docker push ${registryHost}/cert_task:${params.appVersion}"
+                        sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${registryHost}/${repositoryName}:${params.appVersion} ."
+                        withDockerRegistry( [credentialsId:"${registryCredsID}", url:"https://${registryHost}"] ) {
+                            sh "docker push ${registryHost}/${repositoryName}:${params.appVersion}"
                         }
                     }
                 }
