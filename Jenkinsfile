@@ -8,9 +8,6 @@ pipeline {
     stages {
         stage('Set environments') {
             steps {
-                script {
-                    env.DOCKER_HOST = "ssh://revyakin@95.73.61.76"
-                }
             }
         }
         // stage('Get docker socket group') {
@@ -30,15 +27,15 @@ pipeline {
             //     }
             // }
             steps {
-                node ('linux') {
-                    sshagent (credentials: ['1d341349-b5bc-483f-9f54-151bcc426690']) {
-                        sh "echo uname -a"
-                    }
+                git branch: "application",
+                    url: "https://github.com/LovingFox/devops-cert_task.git"
+                script {
+                    env.DOCKER_HOST = "ssh://revyakin@95.73.61.76"
                 }
-                // git branch: "application",
-                //     url: "https://github.com/LovingFox/devops-cert_task.git"
+                sshagent (credentials: ['1d341349-b5bc-483f-9f54-151bcc426690']) {
+                    sh "docker build --build-arg APPVERSION=${params.appVersion} --tag nexus.rtru.tk:8123/cert_task:${params.appVersion} ."
+                }
                 // sh "docker context update default --docker host=unix:///var/run/docker.sock"
-                // sh "docker build --build-arg APPVERSION=${params.appVersion} --tag nexus.rtru.tk:8123/cert_task:${params.appVersion} ."
             }
         }
     }
