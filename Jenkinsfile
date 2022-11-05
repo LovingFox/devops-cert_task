@@ -6,10 +6,10 @@ pipeline {
     agent any
 
     stages {
-        stage('Set environments') {
-            steps {
-            }
-        }
+        // stage('Set environments') {
+        //     steps {
+        //     }
+        // }
         // stage('Get docker socket group') {
         //     steps {
         //         script {
