@@ -11,8 +11,10 @@ pipeline {
                 script {
                     dockerHost = "ssh://revyakin@95.73.61.76"
                     sshCredsID = "1d341349-b5bc-483f-9f54-151bcc426690"
-                    registryHost = "nexus.rtru.tk:8123"
-                    registryCredsID = "678de0e5-da9b-4305-bcf5-1f10f46f8246"
+                    // registryHost = "nexus.rtru.tk:8123"
+                    // registryCredsID = "678de0e5-da9b-4305-bcf5-1f10f46f8246"
+                    registryHost = "657846606580.dkr.ecr.eu-central-1.amazonaws.com/devops"
+                    registryCredsID = "dc4551e2-fc10-4d39-8f0a-c6ac5278c52f"
                 }
             }
         }
