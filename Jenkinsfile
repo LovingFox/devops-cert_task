@@ -26,11 +26,14 @@ pipeline {
             //         reuseNode true
             //     }
             // }
+            environment {
+                DOCKER_HOST="ssh://revyakin@95.73.61.76"
+            }
             steps {
                 sshagent (credentials: ['1d341349-b5bc-483f-9f54-151bcc426690']) {
                     git branch: "application",
                         url: "https://github.com/LovingFox/devops-cert_task.git"
-                    sh "DOCKER_HOST=ssh://revyakin@95.73.61.76 docker build --build-arg APPVERSION=${params.appVersion} --tag nexus.rtru.tk:8123/cert_task:${params.appVersion} ."
+                    sh "docker build --build-arg APPVERSION=${params.appVersion} --tag nexus.rtru.tk:8123/cert_task:${params.appVersion} ."
                 }
                 // script {
                 //     env.DOCKER_HOST = "ssh://revyakin@95.73.61.76"
