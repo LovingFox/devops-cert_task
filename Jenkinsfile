@@ -38,9 +38,9 @@ pipeline {
             steps {
                 sshagent( credentials:["${sshCredsID}"] ) {
                     withDockerContainer( "docker:20.10.21-git" ) {
-                        git branch: "application",
-                            url: "https://github.com/LovingFox/devops-cert_task.git"
                         withEnv( ["DOCKER_HOST=unix:///var/run/docker.sock"] ) {
+                            git branch: "application",
+                                url: "https://github.com/LovingFox/devops-cert_task.git"
                             sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${registryHost}/cert_task:${params.appVersion} ."
                             withDockerRegistry( [credentialsId:"${registryCredsID}", url:"https://${registryHost}/"] ) {
                                 sh "docker push ${registryHost}/cert_task:${params.appVersion}"
