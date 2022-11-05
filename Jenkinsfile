@@ -12,7 +12,7 @@ pipeline {
                     dockerHost = "ssh://revyakin@95.73.61.76"
                     sshCredsID = "1d341349-b5bc-483f-9f54-151bcc426690"
                     regHost = "nexus.rtru.tk:8123"
-                    regCredsID = "678de0e5-da9b-4305-bcf5-1f10f46f8246"
+                    registryCredsID = "678de0e5-da9b-4305-bcf5-1f10f46f8246"
                 }
             }
         }
@@ -24,6 +24,9 @@ pipeline {
         //     }
         // }
         stage('Fetch, build, push') {
+            environment {
+                DOCKER_HOST="${dockerHost}"
+            }
             agent {
                 docker {
                     image "docker:20.10.21-git"
@@ -32,19 +35,20 @@ pipeline {
                     reuseNode true
                 }
             }
-            // environment {
-            //     DOCKER_HOST="${dockerHost}"
-            // }
             steps {
                 sshagent (credentials: ["${sshCredsID}"]) {
                     git branch: "application",
                         url: "https://github.com/LovingFox/devops-cert_task.git"
-                    withEnv (["DOCKER_HOST=${dockerHost}"]) {
-                        sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${regHost}/cert_task:${params.appVersion} ."
-                        withDockerRegistry([credentialsId: "${regCredsID}", url: "https://${regHost}/"]) {
-                            sh "docker push ${regHost}/cert_task:${params.appVersion}"
-                        }
+                    sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${registryHost}/cert_task:${params.appVersion} ."
+                    withDockerRegistry([credentialsId: "${registryCredsID}", url: "https://${registryHost}/"]) {
+                        sh "docker push ${registryHost}/cert_task:${params.appVersion}"
                     }
+                    // withEnv (["DOCKER_HOST=${dockerHost}"]) {
+                    //     sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${registryHost}/cert_task:${params.appVersion} ."
+                    //     withDockerRegistry([credentialsId: "${registryCredsID}", url: "https://${registryHost}/"]) {
+                    //         sh "docker push ${registryHost}/cert_task:${params.appVersion}"
+                    //     }
+                    // }
                 }
                 // script {
                 //     env.DOCKER_HOST = "ssh://revyakin@95.73.61.76"
