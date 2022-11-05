@@ -6,13 +6,13 @@ pipeline {
     agent any
 
     stages {
-        stage('Set environments') {
-            steps {
-                script {
-                    env.DOCKER_HOST = "ssh://revyakin@95.73.61.76"
-                }
-            }
-        }
+        // stage('Set environments') {
+        //     steps {
+        //         script {
+        //             env.DOCKER_HOST = "ssh://revyakin@95.73.61.76"
+        //         }
+        //     }
+        // }
         stage('Fetch and build') {
             agent {
                 docker {
