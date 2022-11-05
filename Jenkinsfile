@@ -21,7 +21,7 @@ pipeline {
         //     }
         // }
         stage('Fetch and build') {
-            node {
+            node ('linux') {
                 sshagent (credentials: ['1d341349-b5bc-483f-9f54-151bcc426690']) {
                     sh "echo uname -a"
                     // agent {
