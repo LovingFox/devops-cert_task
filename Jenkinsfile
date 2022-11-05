@@ -13,11 +13,18 @@ pipeline {
         //         }
         //     }
         // }
+        stage('Get docker socket group') {
+            steps {
+                script {
+                    dockerGroup = sh(returnStdout: true, script: 'stat -c %g /var/run/docker.sock').trim()
+                }
+            }
+        }
         stage('Fetch and build') {
             agent {
                 docker {
                     image "docker:20.10.21-git"
-                    args "--privileged -v /var/run/docker.sock:/var/run/docker.sock"
+                    args "--privileged -v /var/run/docker.sock:/var/run/docker.sock --group-add ${dockerGroup}"
                     reuseNode true
                 }
             }
