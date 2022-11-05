@@ -1,4 +1,4 @@
-FROM python:3.8.10-alpine
+FROM index.docker.io/python:3.8.10-alpine
 ARG APPVERSION
 ENV APPVERSION=$APPVERSION \
     FLASK_APP=app \
