@@ -24,14 +24,14 @@ pipeline {
         //     }
         // }
         stage('Fetch, build, push') {
-            // agent {
-            //     docker {
-            //         image "docker:20.10.21-git"
-            //         // args "--privileged -v /var/run/docker.sock:/var/run/docker.sock --group-add ${dockerGroup}"
-            //         args "--privileged -v /var/run/docker.sock:/var/run/docker.sock"
-            //         reuseNode true
-            //     }
-            // }
+            agent {
+                docker {
+                    image "docker:20.10.21-git"
+                    // args "--privileged -v /var/run/docker.sock:/var/run/docker.sock --group-add ${dockerGroup}"
+                    args "--privileged -v /var/run/docker.sock:/var/run/docker.sock"
+                    reuseNode true
+                }
+            }
             // environment {
             //     DOCKER_HOST="${dockerHost}"
             // }
