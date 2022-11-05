@@ -36,16 +36,18 @@ pipeline {
                 }
             }
             steps {
-                sshagent (credentials: ["${sshCredsID}"]) {
+                sshagent( credentials:["${sshCredsID}"] ) {
                     git branch: "application",
                         url: "https://github.com/LovingFox/devops-cert_task.git"
-                    sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${registryHost}/cert_task:${params.appVersion} ."
-                    withDockerRegistry([credentialsId: "${registryCredsID}", url: "https://${registryHost}/"]) {
-                        sh "docker push ${registryHost}/cert_task:${params.appVersion}"
+                    withEnv( ["DOCKER_HOST=unix:///var/run/docker.sock"] ) {
+                        sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${registryHost}/cert_task:${params.appVersion} ."
+                        withDockerRegistry( [credentialsId:"${registryCredsID}", url:"https://${registryHost}/"] ) {
+                            sh "docker push ${registryHost}/cert_task:${params.appVersion}"
+                        }
                     }
                     // withEnv (["DOCKER_HOST=${dockerHost}"]) {
                     //     sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${registryHost}/cert_task:${params.appVersion} ."
-                    //     withDockerRegistry([credentialsId: "${registryCredsID}", url: "https://${registryHost}/"]) {
+                    //     withDockerRegistry ([credentialsId: "${registryCredsID}", url: "https://${registryHost}/"]) {
                     //         sh "docker push ${registryHost}/cert_task:${params.appVersion}"
                     //     }
                     // }
