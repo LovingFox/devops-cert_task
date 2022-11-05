@@ -34,7 +34,7 @@ pipeline {
                     git branch: "application",
                         url: "https://github.com/LovingFox/devops-cert_task.git"
                     sh "docker build --build-arg APPVERSION=${params.appVersion} --tag nexus.rtru.tk:8123/cert_task:${params.appVersion} ."
-                    withDockerRegistry([credentialsId: '678de0e5-da9b-4305-bcf5-1f10f46f8246']) {
+                    withDockerRegistry([credentialsId: '678de0e5-da9b-4305-bcf5-1f10f46f8246', url: ""]) {
                         sh "docker push nexus.rtru.tk:8123/cert_task:${params.appVersion}"
                     }
                 }
