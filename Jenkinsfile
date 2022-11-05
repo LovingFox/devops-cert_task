@@ -51,7 +51,6 @@ pipeline {
                     //         sh "docker push ${registryHost}/cert_task:${params.appVersion}"
                     //     }
                     // }
-              /*   */ }
                 // script {
                 //     env.DOCKER_HOST = "ssh://revyakin@95.73.61.76"
                 // }
