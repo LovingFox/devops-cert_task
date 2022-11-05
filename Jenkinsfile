@@ -6,10 +6,16 @@ pipeline {
     agent any
 
     stages {
-        // stage('Set environments') {
-        //     steps {
-        //     }
-        // }
+        stage('Set vars') {
+            steps {
+                script {
+                    dockerHost = "ssh://revyakin@95.73.61.76"
+                    sshCredsID = "1d341349-b5bc-483f-9f54-151bcc426690"
+                    regHost = "nexus.rtru.tk:8123"
+                    regCredsID = "678de0e5-da9b-4305-bcf5-1f10f46f8246"
+                }
+            }
+        }
         // stage('Get docker socket group') {
         //     steps {
         //         script {
@@ -17,7 +23,7 @@ pipeline {
         //         }
         //     }
         // }
-        stage('Fetch and build') {
+        stage('Fetch, build, push') {
             // agent {
             //     docker {
             //         image "docker:20.10.21-git"
@@ -26,16 +32,18 @@ pipeline {
             //         reuseNode true
             //     }
             // }
-            environment {
-                DOCKER_HOST="ssh://revyakin@95.73.61.76"
-            }
+            // environment {
+            //     DOCKER_HOST="${dockerHost}"
+            // }
             steps {
-                sshagent (credentials: ['1d341349-b5bc-483f-9f54-151bcc426690']) {
+                sshagent (credentials: ["${sshCredsID}"]) {
                     git branch: "application",
                         url: "https://github.com/LovingFox/devops-cert_task.git"
-                    sh "docker build --build-arg APPVERSION=${params.appVersion} --tag nexus.rtru.tk:8123/cert_task:${params.appVersion} ."
-                    withDockerRegistry([credentialsId: '678de0e5-da9b-4305-bcf5-1f10f46f8246', url: "https://nexus.rtru.tk:8123/"]) {
-                        sh "docker push nexus.rtru.tk:8123/cert_task:${params.appVersion}"
+                    withEnv (["DOCKER_HOST=${dockerHost}"]) {
+                        sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${regHost}/cert_task:${params.appVersion} ."
+                        withDockerRegistry([credentialsId: "${regCredsID}", url: "https://${regHost}/"]) {
+                            sh "docker push ${regHost}/cert_task:${params.appVersion}"
+                        }
                     }
                 }
                 // script {
