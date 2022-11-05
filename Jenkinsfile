@@ -22,11 +22,13 @@ pipeline {
         // }
         stage('Fetch and build') {
             agent {
-                docker {
-                    image "docker:20.10.21-git"
-                    // args "--privileged -v /var/run/docker.sock:/var/run/docker.sock --group-add ${dockerGroup}"
-                    args "--privileged -v /var/run/docker.sock:/var/run/docker.sock"
-                    reuseNode true
+                sshagent (credentials: ['1d341349-b5bc-483f-9f54-151bcc426690']) {
+                    docker {
+                        image "docker:20.10.21-git"
+                        // args "--privileged -v /var/run/docker.sock:/var/run/docker.sock --group-add ${dockerGroup}"
+                        args "--privileged -v /var/run/docker.sock:/var/run/docker.sock"
+                        reuseNode true
+                    }
                 }
             }
             steps {
