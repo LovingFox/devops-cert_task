@@ -26,7 +26,7 @@ pipeline {
                     git branch: "application",
                         url: "https://github.com/LovingFox/devops-cert_task.git"
                     // sh "docker context update default --docker host=unix:///var/run/docker.sock"
-                    sh "docker build --build-arg APPVERSION=${params.appVersion} nexus.rtru.tk:8123/cert_task:${params.appVersion} ."
+                    sh "docker build --build-arg APPVERSION=${params.appVersion} --tag nexus.rtru.tk:8123/cert_task:${params.appVersion} ."
                 // }
             }
         }
