@@ -33,7 +33,8 @@ pipeline {
                     git clone https://github.com/LovingFox/devops-cert_task.git
                     cd devops-cert_task
                     git checkout application
-                    sh "docker build --build-arg APPVERSION=${params.appVersion} --tag nexus.rtru.tk:8123/cert_task:${params.appVersion} ."
+                    docker build --build-arg APPVERSION=${params.appVersion} --tag nexus.rtru.tk:8123/cert_task:${params.appVersion} .
+ENDSH'
                     """
                 }
                     // git branch: "application",
