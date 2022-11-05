@@ -25,7 +25,7 @@ pipeline {
                 // sshagent (credentials: ['1d341349-b5bc-483f-9f54-151bcc426690']) {
                     git branch: "application",
                         url: "https://github.com/LovingFox/devops-cert_task.git"
-                    sh "docker context update default --docker host=unix:///var/run/docker.sock"
+                    // sh "docker context update default --docker host=unix:///var/run/docker.sock"
                     sh "docker build --build-arg APPVERSION=${params.appVersion} nexus.rtru.tk:8123/cert_task:${params.appVersion} ."
                 // }
             }
