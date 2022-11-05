@@ -27,13 +27,13 @@ pipeline {
             //     }
             // }
             steps {
-                git branch: "application",
-                    url: "https://github.com/LovingFox/devops-cert_task.git"
-                sh "docker build --build-arg APPVERSION=${params.appVersion} --tag nexus.rtru.tk:8123/cert_task:${params.appVersion} ."
+                sshagent (credentials: ['1d341349-b5bc-483f-9f54-151bcc426690']) {
+                    git branch: "application",
+                        url: "https://github.com/LovingFox/devops-cert_task.git"
+                    sh "docker build --build-arg APPVERSION=${params.appVersion} --tag nexus.rtru.tk:8123/cert_task:${params.appVersion} ."
+                }
                 // script {
                 //     env.DOCKER_HOST = "ssh://revyakin@95.73.61.76"
-                // }
-                // sshagent (credentials: ['1d341349-b5bc-483f-9f54-151bcc426690']) {
                 // }
                 // sh "docker context update default --docker host=unix:///var/run/docker.sock"
             }
