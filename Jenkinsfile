@@ -6,11 +6,18 @@ pipeline {
     agent any
 
     stages {
+        stage('Set environments') {
+            steps {
+                script {
+                    env.DOCKER_HOST = "ssh://revyakin@95.73.61.76"
+                }
+            }
+        }
         stage('Fetch and build') {
             agent {
                 docker {
                     image "docker:20.10.21-git"
-                    args "--host=ssh://revyakin@95.73.61.76 --privileged -v /var/run/docker.sock:/var/run/docker.sock"
+                    args "--privileged -v /var/run/docker.sock:/var/run/docker.sock"
                     reuseNode true
                 }
             }
