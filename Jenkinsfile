@@ -27,25 +27,25 @@ pipeline {
             // environment {
             //     DOCKER_HOST="${dockerHost}"
             // }
-            agent {
-                docker {
-                    image "docker:20.10.21-git"
-                    // args "--privileged -v /var/run/docker.sock:/var/run/docker.sock --group-add ${dockerGroup}"
-                    uri "${dockerHost}"
-                    credentialsId "${sshCredsID}"
-                    args "--privileged -v /var/run/docker.sock:/var/run/docker.sock"
-                    reuseNode true
-                }
-            }
+            // agent {
+            //     docker {
+            //         image "docker:20.10.21-git"
+            //         // args "--privileged -v /var/run/docker.sock:/var/run/docker.sock --group-add ${dockerGroup}"
+            //         args "--privileged -v /var/run/docker.sock:/var/run/docker.sock"
+            //         reuseNode true
+            //     }
+            // }
             steps {
-                // sshagent( credentials:["${sshCredsID}"] ) {
-                    git branch: "application",
-                        url: "https://github.com/LovingFox/devops-cert_task.git"
-                    sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${registryHost}/cert_task:${params.appVersion} ."
-                    withDockerRegistry( [credentialsId:"${registryCredsID}", url:"https://${registryHost}/"] ) {
-                        sh "docker push ${registryHost}/cert_task:${params.appVersion}"
+                git branch: "application",
+                    url: "https://github.com/LovingFox/devops-cert_task.git"
+                sshagent( credentials:["${sshCredsID}"] ) {
+                    withEnv (["DOCKER_HOST=${dockerHost}"]) {
+                        sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${registryHost}/cert_task:${params.appVersion} ."
+                        withDockerRegistry( [credentialsId:"${registryCredsID}", url:"https://${registryHost}/"] ) {
+                            sh "docker push ${registryHost}/cert_task:${params.appVersion}"
+                        }
                     }
-                    // withEnv (["DOCKER_HOST=${dockerHost}"]) {
+                }
                     //     sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${registryHost}/cert_task:${params.appVersion} ."
                     //     withDockerRegistry ([credentialsId: "${registryCredsID}", url: "https://${registryHost}/"]) {
                     //         sh "docker push ${registryHost}/cert_task:${params.appVersion}"
