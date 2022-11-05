@@ -37,7 +37,7 @@ pipeline {
             // }
             steps {
                 sshagent( credentials:["${sshCredsID}"] ) {
-                    withDockerContainer( "docker:20.10.21-git" ) {
+                    withDockerContainer( [image:"docker:20.10.21-git", args:"--privileged -v /var/run/docker.sock:/var/run/docker.sock"] ) {
                         withEnv( ["DOCKER_HOST=unix:///var/run/docker.sock"] ) {
                             git branch: "application",
                                 url: "https://github.com/LovingFox/devops-cert_task.git"
