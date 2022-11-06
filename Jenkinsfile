@@ -94,7 +94,7 @@ pipeline {
 
         stage('Ansible inventory prepare') {
             steps {
-               sh "[ -f hosts ] && rm hosts"
+               sh "if [ -f hosts ]; then rm hosts; fi"
                sh "echo '[builder]' >> hosts"
                sh "[ '${builderDnsName}' = '' ] || echo ${builderDnsName} >> hosts"
             }
