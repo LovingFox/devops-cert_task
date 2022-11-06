@@ -34,5 +34,55 @@ pipeline {
             }
         } // stage Plan
 
+        stage('Approval') {
+            when {
+                not {
+                    equals expected: true, actual: params.autoApprove
+                }
+                not {
+                    equals expected: true, actual: params.destroy
+                }
+            }
+
+            steps {
+                script {
+                    def plan = readFile 'tfplan.txt'
+                    input message: "Do you want to apply the plan?",
+                    parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
+                }
+            }
+        } // stage Approval
+
+        stage('Apply') {
+            when {
+                not {
+                    equals expected: true, actual: params.destroy
+                }
+            }
+            
+            steps {
+                sh "terraform apply -input=false tfplan"
+                script {
+                    builderDnsName = sh(
+                       script: "terraform output -raw builder_dns_name",
+                       returnStdout: true
+                    ).trim()
+                }
+            }
+        } // stage Apply
+
+        stage('Destroy') {
+            when {
+                equals expected: true, actual: params.destroy
+            }
+        
+            steps {
+               sh "terraform destroy --auto-approve"
+               script {
+                   builderDnsName = ""
+               }
+            }
+        } // stage Destroy
+
     } // stages
 }
