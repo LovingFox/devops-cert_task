@@ -123,7 +123,11 @@ pipeline {
             }
         } // stage Ansible
 
-        stage('Builder fetch, build, push') {
+        ///////////////////////////////
+        /// Builder stages
+        ///////////////////////////////
+
+        stage('Builder fetch and build') {
             when {
                 not {
                     equals( expected: '', actual: "${builderDnsName}" )
@@ -139,12 +143,29 @@ pipeline {
                     url: "https://github.com/LovingFox/devops-cert_task.git"
                 sshagent( credentials:["${sshCredsID}"] ) {
                     sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${registryHost}/${repositoryName}:${params.appVersion} ."
+                }
+            }
+        } // stage Builder fetch and build
+
+        stage('Builder push to the registry') {
+            when {
+                not {
+                    equals( expected: '', actual: "${builderDnsName}" )
+                }
+            }
+
+            environment {
+                DOCKER_HOST="ssh://ubuntu@${builderDnsName}"
+            }
+
+            steps {
+                sshagent( credentials:["${sshCredsID}"] ) {
                     withDockerRegistry( [credentialsId:"${registryCredsID}", url:"https://${registryHost}"] ) {
                         sh "docker push ${registryHost}/${repositoryName}:${params.appVersion}"
                     }
                 }
             }
-        } // stage Builder fetch, build, push
+        } // stage Builder push to the registry
 
     } // stages
 }
