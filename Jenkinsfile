@@ -178,7 +178,27 @@ pipeline {
         /// Webserver stages
         ///////////////////////////////
 
-        stage('Webserver pull from the registry') {
+        stage('Webserver stop and remove') {
+            when {
+                not {
+                    equals( expected: '', actual: "${webserverDnsName}" )
+                }
+            }
+
+            environment {
+                DOCKER_HOST="ssh://ubuntu@${webserverDnsName}"
+            }
+
+            steps {
+                sshagent( credentials:["${sshCredsID}"] ) {
+                    sh "for ID in \$(docker ps -q); do docker stop \$ID; done"
+                    sh "for ID in \$(docker ps -a -q); do docker rm \$ID; done"
+                    sh "for ID in \$(docker images -q); do docker rmi \$ID; done"
+                }
+            }
+        } // stage Webserver stop and remove
+
+        stage('Webserver pull and start') {
             when {
                 not {
                     equals( expected: '', actual: "${webserverDnsName}" )
@@ -194,32 +214,10 @@ pipeline {
                     withDockerRegistry( [credentialsId:"${registryCredsID}", url:"https://${registryHost}"] ) {
                         sh "docker pull ${registryHost}/${repositoryName}:${params.appVersion}"
                     }
+                    sh "docker run -p 80:5000 -d ${registryHost}/${repositoryName}:${params.appVersion}"
                 }
             }
-        } // stage Webserver pull from the registry
-
-        stage('Webserver start application]') {
-            when {
-                not {
-                    equals( expected: '', actual: "${webserverDnsName}" )
-                }
-            }
-
-            environment {
-                DOCKER_HOST="ssh://ubuntu@${webserverDnsName}"
-            }
-
-            steps {
-                sshagent( credentials:["${sshCredsID}"] ) {
-                    withDockerRegistry( [credentialsId:"${registryCredsID}", url:"https://${registryHost}"] ) {
-                        sh "docker ps -q | xargs docker stop"
-                        sh "docker images -q | xargs docker rmi"
-                        sh "docker pull ${registryHost}/${repositoryName}:${params.appVersion}"
-                        sh "docker run -p 80:5000 -d ${registryHost}/${repositoryName}:${params.appVersion}"
-                    }
-                }
-            }
-        } // stage Webserver start application
+        } // stage Webserver pull and start
 
     } // stages
 }
