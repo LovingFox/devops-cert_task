@@ -14,6 +14,10 @@ pipeline {
 
     stages {
 
+        ///////////////////////////////
+        /// Terrafotm stages
+        ///////////////////////////////
+
         stage('Checkout') {
             steps {
                 checkout( [$class: 'GitSCM', branches: [[name: '*/terraform']]] )
@@ -23,7 +27,7 @@ pipeline {
         stage('Plan') {
             when {
                 not {
-                    equals expected: true, actual: params.destroy
+                    equals( expected: true, actual: params.destroy )
                 }
             }
 
@@ -37,10 +41,10 @@ pipeline {
         stage('Approval') {
             when {
                 not {
-                    equals expected: true, actual: params.autoApprove
+                    equals( expected: true, actual: params.autoApprove )
                 }
                 not {
-                    equals expected: true, actual: params.destroy
+                    equals( expected: true, actual: params.destroy )
                 }
             }
 
@@ -56,7 +60,7 @@ pipeline {
         stage('Apply') {
             when {
                 not {
-                    equals expected: true, actual: params.destroy
+                    equals( expected: true, actual: params.destroy )
                 }
             }
             
@@ -73,7 +77,7 @@ pipeline {
 
         stage('Destroy') {
             when {
-                equals expected: true, actual: params.destroy
+                equals( expected: true, actual: params.destroy )
             }
         
             steps {
@@ -83,6 +87,22 @@ pipeline {
                }
             }
         } // stage Destroy
+
+        ///////////////////////////////
+        /// Ansible stages
+        ///////////////////////////////
+
+        stage('Ansible builder') {
+            when {
+                not {
+                    equals( expected: "", actual: builderDnsName )
+                }
+            }
+
+            steps {
+                echo "Hello World!"
+            }
+        } // stage Ansible builder
 
     } // stages
 }
