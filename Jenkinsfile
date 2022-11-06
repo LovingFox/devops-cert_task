@@ -131,7 +131,7 @@ pipeline {
             }
 
             environment {
-                DOCKER_HOST="ssh://${builderDnsName}"
+                DOCKER_HOST="ssh://ubuntu@${builderDnsName}"
             }
 
             steps {
