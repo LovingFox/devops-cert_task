@@ -15,6 +15,12 @@
         name: docker.service
         state: started
 
+    - name: Ensuer user ubuntu in group docker
+      user:
+        name: ubuntu
+        groups: docker
+        append: true
+
 - name: Webserver preparing
   hosts: webserver
   become: true
@@ -30,3 +36,9 @@
       service:
         name: docker.service
         state: started
+
+    - name: Ensuer user ubuntu in group docker
+      user:
+        name: ubuntu
+        groups: docker
+        append: true
