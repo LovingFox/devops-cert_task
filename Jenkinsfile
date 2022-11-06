@@ -109,12 +109,7 @@ pipeline {
                 //     become: true,
                 // )
                 sshagent( credentials:['AWS_UBUNTU_INSTANCE_SSH_KEY'] ) {
-                    // sh "cat /etc/os-release"
-                    ansiblePlaybook(
-                        playbook: 'prepare-instances.yml',
-                        inventory: 'hosts',
-                        become: true,
-                    )
+                    sh "ansible-playbook prepare-instances.yml -i hosts -b --become-user root -u ubuntu"
                 }
             }
         } // stage Ansible
