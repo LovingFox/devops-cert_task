@@ -130,15 +130,17 @@ pipeline {
                 }
             }
 
+            environment {
+                DOCKER_HOST="ssh://${builderDnsName}"
+            }
+
             steps {
                 git branch: "application",
                     url: "https://github.com/LovingFox/devops-cert_task.git"
                 sshagent( credentials:["${sshCredsID}"] ) {
-                    withEnv (["DOCKER_HOST=ssh://${builderDnsName}"]) {
-                        sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${registryHost}/${repositoryName}:${params.appVersion} ."
-                        withDockerRegistry( [credentialsId:"${registryCredsID}", url:"https://${registryHost}"] ) {
-                            sh "docker push ${registryHost}/${repositoryName}:${params.appVersion}"
-                        }
+                    sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${registryHost}/${repositoryName}:${params.appVersion} ."
+                    withDockerRegistry( [credentialsId:"${registryCredsID}", url:"https://${registryHost}"] ) {
+                        sh "docker push ${registryHost}/${repositoryName}:${params.appVersion}"
                     }
                 }
             }
