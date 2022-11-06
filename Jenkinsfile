@@ -216,9 +216,7 @@ pipeline {
 
         stage('CleanWorkspace') {
             when {
-                not {
-                    equals( expected: '', actual: "${builderDnsName}${webserverDnsName}" )
-                }
+                equals( expected: '', actual: "${builderDnsName}${webserverDnsName}" )
             }
 
             steps {
