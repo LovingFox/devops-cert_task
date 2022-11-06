@@ -82,6 +82,10 @@ pipeline {
                        script: "terraform output -raw builder_dns_name",
                        returnStdout: true
                     ).trim()
+                    webserverDnsName = sh(
+                       script: "terraform output -raw webserver_dns_name",
+                       returnStdout: true
+                    ).trim()
                 }
             }
         } // stage Apply
@@ -95,6 +99,7 @@ pipeline {
                sh 'terraform destroy --auto-approve'
                script {
                    builderDnsName = ''
+                   webserverDnsName = ''
                }
             }
         } // stage Destroy
@@ -108,6 +113,8 @@ pipeline {
                sh "if [ -f hosts ]; then rm hosts; fi"
                sh "echo '[builder]' >> hosts"
                sh "[ '${builderDnsName}' = '' ] || echo ${builderDnsName} >> hosts"
+               sh "echo '[webserver]' >> hosts"
+               sh "[ '${webserverDnsName}' = '' ] || echo ${webserverDnsName} >> hosts"
             }
         } // stage Ansible inventory prepare
 
@@ -166,6 +173,50 @@ pipeline {
                 }
             }
         } // stage Builder push to the registry
+
+        ///////////////////////////////
+        /// Webserver stages
+        ///////////////////////////////
+
+        stage('Webserver pull from the registry') {
+            when {
+                not {
+                    equals( expected: '', actual: "${webserverDnsName}" )
+                }
+            }
+
+            environment {
+                DOCKER_HOST="ssh://ubuntu@${webserverDnsName}"
+            }
+
+            steps {
+                sshagent( credentials:["${sshCredsID}"] ) {
+                    withDockerRegistry( [credentialsId:"${registryCredsID}", url:"https://${registryHost}"] ) {
+                        sh "docker pull ${registryHost}/${repositoryName}:${params.appVersion}"
+                    }
+                }
+            }
+        } // stage Webserver pull from the registry
+
+        stage('Webserver start application]') {
+            when {
+                not {
+                    equals( expected: '', actual: "${webserverDnsName}" )
+                }
+            }
+
+            environment {
+                DOCKER_HOST="ssh://ubuntu@${webserverDnsName}"
+            }
+
+            steps {
+                sshagent( credentials:["${sshCredsID}"] ) {
+                    withDockerRegistry( [credentialsId:"${registryCredsID}", url:"https://${registryHost}"] ) {
+                        sh "docker pull ${registryHost}/${repositoryName}:${params.appVersion}"
+                    }
+                }
+            }
+        } // stage Webserver start application
 
     } // stages
 }
