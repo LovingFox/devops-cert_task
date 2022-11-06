@@ -95,6 +95,7 @@ pipeline {
                    builderDnsName = ''
                    webserverDnsName = ''
                }
+               cleanWs()
             }
         } // stage Destroy
 
