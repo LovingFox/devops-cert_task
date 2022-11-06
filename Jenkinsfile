@@ -100,17 +100,16 @@ pipeline {
             }
         } // stage Ansible inventory prepare
 
-        stage('Ansible builder') {
-            when {
-                not {
-                    equals( expected: "", actual: builderDnsName )
+        stage('Ansible playbook') {
+            steps {
+                ansiblePlaybook('prepare-instances.yml') {
+                    inventoryPath('hosts')
+                    ansibleName('ansible')
+                    credentialsId('AWS_UBUNTU_INSTANCE_SSH_KEY')
+                    become(true)
                 }
             }
-
-            steps {
-                sh "cat hosts"
-            }
-        } // stage Ansible builder
+        } // stage Ansible
 
     } // stages
 }
