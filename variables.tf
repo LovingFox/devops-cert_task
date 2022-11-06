@@ -1,9 +1,5 @@
 # variables.tf
 
-variable "projectName" {
-   default = "devops-cert_task"
-}
-
 variable "region" {
    default = "eu-central-1"
 }
@@ -29,6 +25,16 @@ variable "instanceNameBuilder" {
 
 variable "securityGroupBuilder" {
    default = "devops-cert_task-builder-sg"
+}
+
+#####################
+# webserver vars
+variable "instanceNameWebserver" {
+   default = "devops-cert_task-webserver"
+}
+
+variable "securityGroupWebserver" {
+   default = "devops-cert_task-webserver-sg"
 }
 
 # end of variables.tf
