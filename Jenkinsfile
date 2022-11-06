@@ -92,6 +92,14 @@ pipeline {
         /// Ansible stages
         ///////////////////////////////
 
+        stage('Ansible inventory prepare') {
+            steps {
+               sh "[ -f hosts ] && rm hosts"
+               sh "echo '[builder]' >> hosts"
+               sh "[ '${builderDnsName}' = '' ] || echo ${builderDnsName} >> hosts"
+            }
+        } // stage Ansible inventory prepare
+
         stage('Ansible builder') {
             when {
                 not {
@@ -100,7 +108,7 @@ pipeline {
             }
 
             steps {
-                echo "Hello World!"
+                sh "cat hosts"
             }
         } // stage Ansible builder
 
