@@ -95,7 +95,6 @@ pipeline {
                    builderDnsName = ''
                    webserverDnsName = ''
                }
-               cleanWs()
             }
         } // stage Destroy
 
@@ -103,18 +102,19 @@ pipeline {
         /// Ansible stages
         ///////////////////////////////
 
-        stage('Ansible inventory prepare') {
-            steps {
-               sh "if [ -f hosts ]; then rm hosts; fi"
-               sh "echo '[builder]' >> hosts"
-               sh "[ '${builderDnsName}' = '' ] || echo ${builderDnsName} >> hosts"
-               sh "echo '[webserver]' >> hosts"
-               sh "[ '${webserverDnsName}' = '' ] || echo ${webserverDnsName} >> hosts"
-            }
-        } // stage Ansible inventory prepare
-
         stage('Ansible playbook') {
+            when {
+                not {
+                    equals( expected: '', actual: "${builderDnsName}${webserverDnsName}" )
+                }
+            }
+
             steps {
+                sh "if [ -f hosts ]; then rm hosts; fi"
+                sh "echo '[builder]' >> hosts"
+                sh "[ '${builderDnsName}' = '' ] || echo ${builderDnsName} >> hosts"
+                sh "echo '[webserver]' >> hosts"
+                sh "[ '${webserverDnsName}' = '' ] || echo ${webserverDnsName} >> hosts"
                 ansiblePlaybook(
                     playbook: 'prepare-instances.yml',
                     inventory: 'hosts',
@@ -123,7 +123,7 @@ pipeline {
                     become: true,
                 )
             }
-        } // stage Ansible
+        } // stage Ansible playbook
 
         ///////////////////////////////
         /// Builder stages
@@ -213,6 +213,18 @@ pipeline {
                 }
             }
         } // stage Webserver pull and start
+
+        stage('CleanWorkspace') {
+            when {
+                not {
+                    equals( expected: '', actual: "${builderDnsName}${webserverDnsName}" )
+                }
+            }
+
+            steps {
+                cleanWs()
+            }
+        } // CleanWorkspace
 
     } // stages
 }
