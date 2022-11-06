@@ -212,7 +212,10 @@ pipeline {
             steps {
                 sshagent( credentials:["${sshCredsID}"] ) {
                     withDockerRegistry( [credentialsId:"${registryCredsID}", url:"https://${registryHost}"] ) {
+                        sh "docker ps -q | xargs docker stop"
+                        sh "docker images -q | xargs docker rmi"
                         sh "docker pull ${registryHost}/${repositoryName}:${params.appVersion}"
+                        sh "docker run -p 80:5000 -d ${registryHost}/${repositoryName}:${params.appVersion}"
                     }
                 }
             }
