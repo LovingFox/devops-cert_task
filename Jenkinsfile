@@ -14,6 +14,17 @@ pipeline {
 
     stages {
 
+        stage('Set variables') {
+            steps {
+                script {
+                    sshCredsID = 'AWS_UBUNTU_INSTANCE_SSH_KEY'
+                    repositoryName = 'cert_task'
+                    registryCredsID = 'AWS_ECR_CREDENTIALS'
+                    registryHost = '657846606580.dkr.ecr.eu-central-1.amazonaws.com'
+                }
+            }
+        }
+
         ///////////////////////////////
         /// Terrafotm stages
         ///////////////////////////////
@@ -81,9 +92,9 @@ pipeline {
             }
         
             steps {
-               sh "terraform destroy --auto-approve"
+               sh 'terraform destroy --auto-approve'
                script {
-                   builderDnsName = ""
+                   builderDnsName = ''
                }
             }
         } // stage Destroy
@@ -105,15 +116,33 @@ pipeline {
                 ansiblePlaybook(
                     playbook: 'prepare-instances.yml',
                     inventory: 'hosts',
-                    credentialsId: 'AWS_UBUNTU_INSTANCE_SSH_KEY',
+                    credentialsId: "${sshCredsID}",
                     disableHostKeyChecking: true,
                     become: true,
                 )
-                // sshagent( credentials:['AWS_UBUNTU_INSTANCE_SSH_KEY'] ) {
-                //     sh "ansible-playbook prepare-instances.yml -i hosts -b --become-user root -u ubuntu"
-                // }
             }
         } // stage Ansible
+
+        stage('Builder fetch, build, push') {
+            when {
+                not {
+                    equals( expected: '', actual: "${builderDnsName}" )
+                }
+            }
+
+            steps {
+                git branch: "application",
+                    url: "https://github.com/LovingFox/devops-cert_task.git"
+                sshagent( credentials:["${sshCredsID}"] ) {
+                    withEnv (["DOCKER_HOST=ssh://${builderDnsName}"]) {
+                        sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${registryHost}/${repositoryName}:${params.appVersion} ."
+                        withDockerRegistry( [credentialsId:"${registryCredsID}", url:"https://${registryHost}"] ) {
+                            sh "docker push ${registryHost}/${repositoryName}:${params.appVersion}"
+                        }
+                    }
+                }
+            }
+        } // stage Builder fetch, build, push
 
     } // stages
 }
