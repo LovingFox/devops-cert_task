@@ -106,7 +106,7 @@ pipeline {
                     playbook: 'prepare-instances.yml',
                     inventory: 'hosts',
                     credentialsId: 'AWS_UBUNTU_INSTANCE_SSH_KEY',
-                    hostKeyChecking: true,
+                    disableHostKeyChecking: true,
                     become: true,
                 )
                 // sshagent( credentials:['AWS_UBUNTU_INSTANCE_SSH_KEY'] ) {
