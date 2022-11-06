@@ -16,7 +16,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                checkout scm, branches: [[name: '*/terraform']]
+                checkout( [$class: 'GitSCM', branches: [[name: '*/terraform']]] )
             }
         } // stage Checkout
 
