@@ -102,14 +102,12 @@ pipeline {
 
         stage('Ansible playbook') {
             steps {
-                // ansiblePlaybook(
-                //     playbook: 'prepare-instances.yml',
-                //     inventory: 'hosts',
-                //     credentialsId: 'AWS_UBUNTU_INSTANCE_SSH_KEY',
-                //     become: true,
-                // )
                 sshagent( credentials:['AWS_UBUNTU_INSTANCE_SSH_KEY'] ) {
-                    sh "cat /etc/os-release"
+                    ansiblePlaybook(
+                        playbook: 'prepare-instances.yml',
+                        inventory: 'hosts',
+                        become: true,
+                    )
                 }
             }
         } // stage Ansible
