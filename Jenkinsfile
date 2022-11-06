@@ -102,12 +102,12 @@ pipeline {
 
         stage('Ansible playbook') {
             steps {
-                ansiblePlaybook('prepare-instances.yml') {
-                    inventoryPath('hosts')
-                    ansibleName('ansible')
-                    credentialsId('AWS_UBUNTU_INSTANCE_SSH_KEY')
-                    become(true)
-                }
+                ansiblePlaybook(
+                    playbook: 'prepare-instances.yml',
+                    inventory: 'hosts',
+                    credentialsId: 'AWS_UBUNTU_INSTANCE_SSH_KEY',
+                    become: true,
+                )
             }
         } // stage Ansible
 
