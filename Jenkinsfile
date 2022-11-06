@@ -96,13 +96,20 @@ pipeline {
             steps {
                sh "if [ -f hosts ]; then rm hosts; fi"
                sh "echo '[builder]' >> hosts"
-               sh "[ '${builderDnsName}' = '' ] || echo ${builderDnsName} >> hosts"
+               sh "[ '${builderDnsName}' = '' ] || echo ${builderDnsName}  ansible_user=ubuntu >> hosts"
             }
         } // stage Ansible inventory prepare
 
         stage('Ansible playbook') {
             steps {
+                // ansiblePlaybook(
+                //     playbook: 'prepare-instances.yml',
+                //     inventory: 'hosts',
+                //     credentialsId: 'AWS_UBUNTU_INSTANCE_SSH_KEY',
+                //     become: true,
+                // )
                 sshagent( credentials:['AWS_UBUNTU_INSTANCE_SSH_KEY'] ) {
+                    // sh "cat /etc/os-release"
                     ansiblePlaybook(
                         playbook: 'prepare-instances.yml',
                         inventory: 'hosts',
