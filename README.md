@@ -1,6 +1,8 @@
 # devops-cert_task
 
-## Certification task of DevOps Engineer course [https://devops-school.ru/devops_engineer.html](DevOps School)
+## Certification task of DevOps Engineer course
+
+[https://devops-school.ru/devops_engineer.html](DevOps School)
 
 Jenkins pipeline to build and deploy a web application on AWS EC2 resources. One instance build an application, other one starts it.
 
@@ -12,7 +14,7 @@ Jenkins pipeline to build and deploy a web application on AWS EC2 resources. One
 
 ### Deploy
 
-* 0 Jenkins pull this repository and processes Jenkinsfile
+* 0 Jenkins pulls this repository and processes Jenkinsfile
 * 1 Terraform deploys infrastructure on AWS EC2
 * 2 Ansible configures instances
 * 3 Docker builds an application on the Builder instance
@@ -55,7 +57,7 @@ Terraform just destroy all instances. AWS ECR repository is not touched.
    Pipeline Definition: Pipeline script from SCM, Git  
    Repository URL: [https://github.com/LovingFox/devops-cert_task.git](https://github.com/LovingFox/devops-cert_task.git)
 
-   * Credentials for ssh
+1. Jenkins credentials for ssh
 
 Kind: *SSH Username with private key*  
 ID: *AWS_UBUNTU_INSTANCE_SSH_KEY*  
@@ -66,7 +68,7 @@ Key:
     cat ~/.ssh/aws-ec2-key
     ```
 
-   * Credentials for AWS ECR repository
+1. Jenkins credentials for AWS ECR repository
 
 Kind: *SSH Username with private key*  
 ID: *AWS_ECR_CREDENTIALS*
@@ -77,7 +79,7 @@ Password:
     aws ecr get-login-password
     ```
 
-   * Credentials for AWS API
+1. Jenkins credentials for AWS API
 
 Kind: *Secret text*  
 ID: *AWS_ACCESS_KEY_ID*  
