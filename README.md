@@ -31,6 +31,7 @@ Terraform just destroy AWS EC2 instances (Builder and Webserver). AWS ECR reposi
 ### Parameters
 
 * *appVersion* is a version of the application (default is 1.0)
+* *ecrHost* is a hostname of ECR (default is empty)
 * *autoApprove* is true or false (default), automatically run Terraform apply after generating plan or user approvement is required
 * *destroy* is true or false (default), destroy Terraform build or not
 
@@ -102,8 +103,10 @@ Just a simple *Hello world* web server based on the python flask. It shows versi
 1. Start Jenkins job by GUI or by cli:
 
     ```bash
-    java -jar jenkins-cli.jar build -v -f devops-cert_task -p autoApprove=true -p appVersion=1.0
+    java -jar jenkins-cli.jar build -v -f devops-cert_task -p autoApprove=true -p appVersion=1.0 -p ecrHost=657846606580.dkr.ecr.eu-central-1.amazonaws.com
     ```
+
+    *657846606580.dkr.ecr.eu-central-1.amazonaws.com* is just an example hostname of ECR, change it by yours
 
 1. Check the application is working:
 
