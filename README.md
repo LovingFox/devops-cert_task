@@ -2,7 +2,7 @@
 
 ## Certification task of DevOps Engineer course
 
-[https://devops-school.ru/devops_engineer.html](DevOps School)
+[DevOps School](https://devops-school.ru/devops_engineer.html)
 
 Jenkins pipeline to build and deploy a web application on AWS EC2 resources. One instance build an application, other one starts it.
 
@@ -28,14 +28,24 @@ Docker on the Jenkins host uses ssh endpoint to work with remote docker-socket
 
 Terraform just destroy all instances. AWS ECR repository is not touched.
 
-#### Files
+### Parameters
+
+* *appVersion* is a version for application
+* *autoApprove* is true or false (default), automatically run apply after generating plan or user approve is required
+* *destroy* is true or false (default), destroy Terraform build or not
+
+## Files
 
 1. *Jenkinsfile* (pipeline)
 1. *\*.tf* (Terraform files)
 1. *prepare-instances.yml* (Ansible playbook)
 1. *Dockerfile, app.py, requirements.txt* (Python application)
 
-#### Usage
+### Application
+
+Just a simple *Hello world* web server based on the python flask. It shows version that set by Jenkins parameter *appVersion*.
+
+## Usage
 
 1. Install **aws cli**, **terraform**, **ansible**, **Jenkins** (plugins: SSH Agent, Ansible, Terrafotm)
 1. Generate ssh key and import it to the AWS EC2
