@@ -11,6 +11,8 @@ pipeline {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
 
+        TF_VAR_keyName = 'devops-cert_task-key'
+
         sshCredsID = 'AWS_UBUNTU_INSTANCE_SSH_KEY'
         repositoryName = 'cert_task'
         registryCredsID = 'AWS_ECR_CREDENTIALS'
