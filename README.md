@@ -53,7 +53,8 @@ Just a simple *Hello world* web server based on the python flask. It shows versi
 
     ```bash
     ssh-keygen -t rsa -C "aws-ec2-key" -f ~/.ssh/aws-ec2-key
-    aws ec2 import-key-pair --key-name devops-cert_task-key --public-key-material fileb://~/.ssh/aws-ec2-key.pub
+    aws ec2 import-key-pair --key-name devops-cert_task-key \
+        --public-key-material fileb://~/.ssh/aws-ec2-key.pub
     ```
 
 1. Create ECR repository
@@ -103,7 +104,9 @@ Just a simple *Hello world* web server based on the python flask. It shows versi
 1. Start Jenkins job by GUI or by cli:
 
     ```bash
-    java -jar jenkins-cli.jar build -v -f devops-cert_task -p autoApprove=true -p appVersion=1.0 -p ecrHost=657846606580.dkr.ecr.eu-central-1.amazonaws.com
+    java -jar jenkins-cli.jar build -v -f devops-cert_task \
+        -p autoApprove=true -p appVersion=1.0 \
+        -p ecrHost=657846606580.dkr.ecr.eu-central-1.amazonaws.com
     ```
 
     *657846606580.dkr.ecr.eu-central-1.amazonaws.com* is just an example hostname of ECR, change it by yours
