@@ -198,6 +198,9 @@ pipeline {
                         sh "docker pull ${registryHost}/${repositoryName}:${params.appVersion}"
                     }
                     sh "docker run -p 80:5000 -d ${registryHost}/${repositoryName}:${params.appVersion}"
+                    echo "########################################################################################"
+                    echo "### curl http://${webserverDnsName}"
+                    echo "########################################################################################"
                 }
             }
         } // stage Webserver pull and start
