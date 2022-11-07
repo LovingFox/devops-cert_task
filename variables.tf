@@ -1,5 +1,9 @@
 # variables.tf
 
+variable "keyName" {
+   default = "<Place here the ssh key name in ASW EC2>"
+}
+
 variable "region" {
    default = "eu-central-1"
 }
@@ -13,8 +17,12 @@ variable "ami" {
    default = "ami-0caef02b518350c8b"
 }
 
-variable "keyName" {
-   default = "devops-cert_task-key"
+variable "securityGroupDefault" {
+   default = "devops-cert_task-default-sg"
+}
+
+variable "securityGroupWeb" {
+   default = "devops-cert_task-web-sg"
 }
 
 #####################
@@ -23,18 +31,10 @@ variable "instanceNameBuilder" {
    default = "devops-cert_task-builder"
 }
 
-variable "securityGroupBuilder" {
-   default = "devops-cert_task-builder-sg"
-}
-
 #####################
 # webserver vars
 variable "instanceNameWebserver" {
    default = "devops-cert_task-webserver"
-}
-
-variable "securityGroupWebserver" {
-   default = "devops-cert_task-webserver-sg"
 }
 
 # end of variables.tf
