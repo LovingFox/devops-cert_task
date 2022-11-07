@@ -25,12 +25,6 @@ pipeline {
         /// Terrafotm stages
         ///////////////////////////////
 
-        stage('Checkout') {
-            steps {
-                checkout( [$class: 'GitSCM', branches: [[name: '*/terraform']]] )
-            }
-        } // stage Checkout
-
         stage('Plan') {
             when {
                 not {
@@ -129,8 +123,6 @@ pipeline {
             }
 
             steps {
-                git branch: "application",
-                    url: "https://github.com/LovingFox/devops-cert_task.git"
                 sshagent( credentials:["${sshCredsID}"] ) {
                     sh "docker build --build-arg APPVERSION=${params.appVersion} --tag ${registryHost}/${repositoryName}:${params.appVersion} ."
                 }
