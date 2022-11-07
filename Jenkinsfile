@@ -84,20 +84,6 @@ pipeline {
             }
         } // stage Apply
 
-        stage('Destroy') {
-            when {
-                equals( expected: true, actual: params.destroy )
-            }
-        
-            steps {
-               sh 'terraform destroy --auto-approve'
-               script {
-                   builderDnsName = ''
-                   webserverDnsName = ''
-               }
-            }
-        } // stage Destroy
-
         ///////////////////////////////
         /// Ansible stages
         ///////////////////////////////
@@ -105,7 +91,7 @@ pipeline {
         stage('Ansible playbook') {
             when {
                 not {
-                    equals( expected: '', actual: "${builderDnsName}${webserverDnsName}" )
+                    equals( expected: true, actual: params.destroy )
                 }
             }
 
@@ -132,7 +118,7 @@ pipeline {
         stage('Builder fetch and build') {
             when {
                 not {
-                    equals( expected: '', actual: "${builderDnsName}" )
+                    equals( expected: true, actual: params.destroy )
                 }
             }
 
@@ -152,7 +138,7 @@ pipeline {
         stage('Builder push to the registry') {
             when {
                 not {
-                    equals( expected: '', actual: "${builderDnsName}" )
+                    equals( expected: true, actual: params.destroy )
                 }
             }
 
@@ -176,7 +162,7 @@ pipeline {
         stage('Webserver stop and remove') {
             when {
                 not {
-                    equals( expected: '', actual: "${webserverDnsName}" )
+                    equals( expected: true, actual: params.destroy )
                 }
             }
 
@@ -196,7 +182,7 @@ pipeline {
         stage('Webserver pull and start') {
             when {
                 not {
-                    equals( expected: '', actual: "${webserverDnsName}" )
+                    equals( expected: true, actual: params.destroy )
                 }
             }
 
@@ -214,15 +200,20 @@ pipeline {
             }
         } // stage Webserver pull and start
 
-        stage('CleanWorkspace') {
-            when {
-                equals( expected: '', actual: "${builderDnsName}${webserverDnsName}" )
-            }
+        ///////////////////////////////////
+        /// Terraform Destroy and cleanws
+        ///////////////////////////////////
 
+        stage('Destroy') {
+            when {
+                equals( expected: true, actual: params.destroy )
+            }
+        
             steps {
+                sh 'terraform destroy --auto-approve'
                 cleanWs()
             }
-        } // CleanWorkspace
+        } // stage Destroy
 
     } // stages
 }
