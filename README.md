@@ -15,7 +15,7 @@ Jenkins pipeline to build and deploy a web application on AWS EC2 resources. One
 ### Deploy
 
 * 0 - Jenkins pulls this repository and processes Jenkinsfile
-* 1 - Terraform deploys an infrastructure on AWS EC2
+* 1 - Terraform deploys an infrastructure on AWS EC2: two instances (Builder and Webserver)
 * 2 - Ansible configures instances
 * 3 - Docker builds an application on the Builder instance
 * 3a - Docker pushes an artifact container to AWS ECR repository
