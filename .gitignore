@@ -1,2 +1,4 @@
-application/__pycache__
-application/venv
+__pycache__
+venv
+.terraform
+.terraform.lock.hcl
