@@ -15,7 +15,7 @@ Jenkins pipeline to build and deploy a web application on AWS EC2 resources. One
 ### Deploy
 
 * 0 - Jenkins pulls this repository and processes Jenkinsfile
-* 1 - Terraform deploys infrastructure on AWS EC2
+* 1 - Terraform deploys an infrastructure on AWS EC2
 * 2 - Ansible configures instances
 * 3 - Docker builds an application on the Builder instance
 * 3a - Docker pushes an artifact container to AWS ECR repository
@@ -26,12 +26,12 @@ Docker on the Jenkins host uses ssh endpoint to work with remote docker-socket
 
 ### Destroy
 
-Terraform just destroy all instances. AWS ECR repository is not touched.
+Terraform just destroy AWS EC2 instances (Builder and Webserver). AWS ECR repository is not touched.
 
 ### Parameters
 
-* *appVersion* is a version of application (default is 1.0)
-* *autoApprove* is true or false (default), automatically run apply after generating plan or user approvement is required
+* *appVersion* is a version of the application (default is 1.0)
+* *autoApprove* is true or false (default), automatically run Terraform apply after generating plan or user approvement is required
 * *destroy* is true or false (default), destroy Terraform build or not
 
 ## Files
@@ -58,7 +58,7 @@ Just a simple *Hello world* web server based on the python flask. It shows versi
 1. Create ECR repository
 
     ```bash
-    aws ecr describe- --repository-name cert_task
+    aws ecr create-repository --repository-name cert_task
     ```
 
 1. Create Jenkins job
@@ -69,7 +69,7 @@ Just a simple *Hello world* web server based on the python flask. It shows versi
 
 1. Create Jenkins credentials for ssh
 
-   Kind: *SSH Username with private key*  
+   Kind: SSH Username with private key  
    ID: *AWS_UBUNTU_INSTANCE_SSH_KEY*  
    Username: *ubuntu*  
    Key:
@@ -80,7 +80,7 @@ Just a simple *Hello world* web server based on the python flask. It shows versi
 
 1. Create Jenkins credentials for AWS ECR repository
 
-   Kind: *SSH Username with private key*  
+   Kind: SSH Username with private key  
    ID: *AWS_ECR_CREDENTIALS*
    Username: *AWS*  
    Password:
@@ -91,7 +91,7 @@ Just a simple *Hello world* web server based on the python flask. It shows versi
 
 1. Create Jenkins credentials for AWS API
 
-   Kind: *Secret text*  
+   Kind: Secret text  
    ID: *AWS_ACCESS_KEY_ID*  
    Secret: \<Your AWS Access Key ID\>  
 
@@ -108,7 +108,7 @@ Just a simple *Hello world* web server based on the python flask. It shows versi
 1. Check the application is working:
 
     ```bash
-    cutl http://curl http://\<host name\>.\<region\>.compute.amazonaws.com
+    cutl http://curl http://<host name>.<region>.compute.amazonaws.com
     ```
 
    URL of the webserver is prined at the end of the Jenkins job
